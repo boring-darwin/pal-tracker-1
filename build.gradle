@@ -26,6 +26,8 @@ repositories {
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
     testCompile("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.7")
+    testCompile("org.mockito:mockito-core:2.23.4")
 }
 
 bootRun.environment([
@@ -35,3 +37,4 @@ bootRun.environment([
 test.environment([
         "welcome.message": "Hello from test",
 ])
+
