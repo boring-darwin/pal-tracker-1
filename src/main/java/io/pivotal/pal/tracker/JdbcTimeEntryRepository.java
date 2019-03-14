@@ -26,8 +26,8 @@ public class JdbcTimeEntryRepository implements TimeEntryRepository {
 
         KeyHolder generatedKeyHolder = new GeneratedKeyHolder();
 
-        jdbcTemplate.update(con -> {
-            PreparedStatement preparedStatement = con.prepareStatement("INSERT INTO time_entries (project_id, user_id, date, hours)" + "VALUES(?,?,?,?)", RETURN_GENERATED_KEYS);
+        jdbcTemplate.update(connection -> {
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO time_entries (project_id, user_id, date, hours)" + "VALUES(?,?,?,?)", RETURN_GENERATED_KEYS);
             preparedStatement.setLong(1,timeEntryToCreate.getProjectId());
             preparedStatement.setLong(2,timeEntryToCreate.getUserId());
             preparedStatement.setDate(3, Date.valueOf(timeEntryToCreate.getDate()));
