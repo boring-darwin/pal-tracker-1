@@ -12,11 +12,6 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 @SpringBootApplication
 public class PalTrackerApplication {
 
-    @Bean
-    public TimeEntryRepository timeEntryRepository(){
-        return new InMemoryTimeEntryRepository();
-    }
-
     public static void main(String[] args) {
         SpringApplication.run(PalTrackerApplication.class, args);
     }
