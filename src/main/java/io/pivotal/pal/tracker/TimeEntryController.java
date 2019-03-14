@@ -3,7 +3,6 @@ package io.pivotal.pal.tracker;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.MeterRegistry;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +27,8 @@ public class TimeEntryController {
     public ResponseEntity create(@RequestBody TimeEntry timeEntryToCreate) {
 
         TimeEntry timeEntry =  timeEntryRepository.create(timeEntryToCreate);
+        actionCounter.increment();
+        timeEntrySummary.record(timeEntryRepository.list().size());
 
         return new ResponseEntity<>(timeEntry, HttpStatus.CREATED);
 
@@ -39,6 +40,7 @@ public class TimeEntryController {
         TimeEntry timeEntry = timeEntryRepository.find(id);
 
         if (timeEntry == null) {
+            actionCounter.increment();
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(timeEntry, HttpStatus.OK);
@@ -46,6 +48,7 @@ public class TimeEntryController {
 
     @GetMapping
     public ResponseEntity<List<TimeEntry>> list() {
+        actionCounter.increment();
         return new ResponseEntity<>(timeEntryRepository.list(), HttpStatus.OK);
     }
 
@@ -53,6 +56,7 @@ public class TimeEntryController {
     public ResponseEntity<TimeEntry> update(@PathVariable long id, @RequestBody TimeEntry timeEntry) {
         TimeEntry updatedTimeEntry = timeEntryRepository.update(id, timeEntry);
         if (updatedTimeEntry == null) {
+            actionCounter.increment();
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(updatedTimeEntry, HttpStatus.OK);
@@ -61,7 +65,9 @@ public class TimeEntryController {
     @DeleteMapping("{id}")
     public ResponseEntity<TimeEntry> delete(@PathVariable long id) {
         timeEntryRepository.delete(id);
-        ResponseEntity<TimeEntry> responseEntity = new ResponseEntity<TimeEntry>(HttpStatus.NO_CONTENT);
+        actionCounter.increment();
+        timeEntrySummary.record(timeEntryRepository.list().size());
+        ResponseEntity<TimeEntry> responseEntity = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         return responseEntity;
     }
 }
